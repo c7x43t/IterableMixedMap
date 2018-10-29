@@ -1,6 +1,6 @@
 
-function IterableMixedMap(iterable){
-	// the WeakMap is stored as a hidden property
+function MixedMap(iterable){
+	// the WeakMap/Map is stored as a hidden property
 	const isPrimitive=o=>typeof o==="string"||typeof o==="number";
 	const _WeakMap_=new WeakMap();
 	const _Map_={};
@@ -22,7 +22,7 @@ function IterableMixedMap(iterable){
 			yield this[keys[i]];
 		}
 	}
-	// the IterableWeakMap comes with additional properties:
+	// the MixedMap comes with additional properties:
 	// length
 	// keys and values: sparse arrays holding the keys and values
 	// with corresponding keys, values beeing at the same index
@@ -38,6 +38,13 @@ function IterableMixedMap(iterable){
 		values:{
 			value:[]
 		},
+		clear:{
+			value: function(){
+				for(let key of this.keys){
+					this.delete[key];
+				}
+			}
+		},
 		set: {
 			value: function(key,value){
 				const primitive=isPrimitive(key);
@@ -49,7 +56,8 @@ function IterableMixedMap(iterable){
 					this.values.push(value);
 					this.length++;
 				}
-				return primitive?_Map_[key]=index:_WeakMap_.set(key,index);
+				primitive?_Map_[key]=value:_WeakMap_.set(key,index);
+				return this;
 			}
 		},
 		get: {
@@ -81,18 +89,18 @@ function IterableMixedMap(iterable){
 			}
 		},
 		// map, forEach, filter, reduce work exactly as expected from the Array methods
-		// they return a new IterableMixedMap in the case of map and filter.
+		// they return a new MixedMap in the case of map and filter.
 		// Arguments of the passed in functions should be (value,key,this) 
-		// this beeing the IterableMixedMap itself
+		// this beeing the MixedMap itself
 		// if no acc=initialValue is passed to reduce, the first element becomes
 		map:{
 			value: function(f){
 				var indices=Object.keys(this.values);
-				var newIterableMixedMap=new this.constructor();
+				var newMixedMap=new this.constructor();
 				for(var i of indices){
-					newIterableMixedMap.set(this.keys[i],f(this.values[i],this.keys[i],this));
+					newMixedMap.set(this.keys[i],f(this.values[i],this.keys[i],this));
 				}
-				return newIterableMixedMap;
+				return newMixedMap;
 			}
 		},
 		forEach:{
@@ -106,19 +114,25 @@ function IterableMixedMap(iterable){
 		filter:{
 			value: function(f){
 				var indices=Object.keys(this.values);
-				var newIterableMixedMap=new this.constructor();
+				var newMixedMap=new this.constructor();
 				for(var i of indices){
-					if(f(this.values[i],this.keys[i],this)) newIterableMixedMap.set(this.keys[i],this.values[i]);
+					if(f(this.values[i],this.keys[i],this)) newMixedMap.set(this.keys[i],this.values[i]);
 				}
-				return newIterableMixedMap;
+				return newMixedMap;
 			}
 		},
 		reduce:{
 			value: function(f,acc){
 				var indices=Object.keys(this.values);
-				var newIterableMixedMap=new this.constructor();
+				var newMixedMap=new this.constructor();
 				var startIndex=0;
-				if(acc===undefined) acc=this.values[indices[startIndex++]];
+				if(acc===UNDEFINED){
+					if(this.length>0){
+						acc=this.values[indices[startIndex++]];
+					}else{
+						throw new Error("Reduce of empty MixedMap with no initial value");
+					}
+				}
 				for(var i=startIndex;i<indices.length;i++){
 					f(acc,this.values[indices[i]],this.keys[indices[i]],this)
 				}

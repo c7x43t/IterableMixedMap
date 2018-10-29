@@ -1,5 +1,5 @@
 
-function IterableMixedMap(){
+function IterableMixedMap(iterable){
 	// the WeakMap is stored as a hidden property
 	const isPrimitive=o=>typeof o==="string"||typeof o==="number";
 	const _WeakMap_=new WeakMap();
@@ -136,6 +136,11 @@ function IterableMixedMap(){
 	// the sparse arrays
 	Object.defineProperty(this.keys,Symbol.iterator,objectIteratorConfig);
 	Object.defineProperty(this.values,Symbol.iterator,objectIteratorConfig);
+	if(iterable){
+		for(let e of iterable){
+			this.set(e[0],e[1])
+		}
+	}
 }
 
 

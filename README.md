@@ -1,8 +1,8 @@
 # MixedMap
 
 ## Syntax
-` new MixedMap([iterable])`
-`iterable` 2-element array or iterable object: [key,value].
+` new MixedMap(iterable)`
+`iterable` yielding 2-element arrays: [key,value].
 
 ## Methods
 ### clear()

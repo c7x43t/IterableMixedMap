@@ -2,6 +2,7 @@
 
 ## Syntax
 ` new MixedMap(iterable)`
+
 `iterable` yielding 2-element arrays: [key,value].
 
 ## Methods

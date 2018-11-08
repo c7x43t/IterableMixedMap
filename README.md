@@ -67,3 +67,6 @@ Iterable with `for...of` loop.
 Sparse `Array` with the values of the `MixedMap`.
 
 Iterable with `for...of` loop.
+
+## Note
+This Data structure has strong references to the objects used as keys in it, so it's technically not a weak map. 

@@ -1,4 +1,4 @@
-# MixedMap
+# MixedMap [Deprecated]
 
 ## Syntax
 ` new MixedMap(iterable)`
